@@ -1,0 +1,19 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: foodwise
+      POSTGRES_PASSWORD: foodwise_dev_password
+      POSTGRES_DB: foodwise
+    ports:
+      - "5432:5432"
+    volumes:
+      - foodwise_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U foodwise -d foodwise"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+volumes:
+  foodwise_pgdata:

@@ -1,0 +1,160 @@
+[
+  {
+    "title": "Egg Potato Tomato Curry",
+    "ingredients": [
+      "egg",
+      "potato",
+      "tomato",
+      "oil",
+      "salt",
+      "turmeric"
+    ],
+    "instructions": "Boil eggs and potatoes; saute chopped tomato and spices; simmer together until cooked."
+  },
+  {
+    "title": "Potato Tomato Bhaji",
+    "ingredients": [
+      "potato",
+      "tomato",
+      "oil",
+      "salt"
+    ],
+    "instructions": "Dice potatoes and tomatoes, then saute and cook covered until tender."
+  },
+  {
+    "title": "Tomato Omelette",
+    "ingredients": [
+      "egg",
+      "tomato",
+      "oil",
+      "salt"
+    ],
+    "instructions": "Beat egg with chopped tomato and salt, then cook thoroughly in a pan."
+  },
+  {
+    "title": "Potato Egg Omelette",
+    "ingredients": [
+      "egg",
+      "potato",
+      "oil",
+      "salt"
+    ],
+    "instructions": "Use cooked grated potato with beaten egg; pan cook both sides."
+  },
+  {
+    "title": "Vegetable Khichuri",
+    "ingredients": [
+      "rice",
+      "lentils",
+      "potato",
+      "carrot",
+      "turmeric",
+      "salt"
+    ],
+    "instructions": "Wash rice and lentils, add vegetables, water and spices, simmer until soft."
+  },
+  {
+    "title": "Egg Fried Rice",
+    "ingredients": [
+      "cooked rice",
+      "egg",
+      "onion",
+      "oil",
+      "salt"
+    ],
+    "instructions": "Stir-fry cooked rice and vegetables with thoroughly cooked egg."
+  },
+  {
+    "title": "Tomato Dal",
+    "ingredients": [
+      "lentils",
+      "tomato",
+      "turmeric",
+      "salt"
+    ],
+    "instructions": "Cook lentils until tender; add sauteed tomato and spices."
+  },
+  {
+    "title": "Potato Mash",
+    "ingredients": [
+      "potato",
+      "onion",
+      "salt",
+      "mustard oil"
+    ],
+    "instructions": "Boil potato, mash with finely chopped onion, salt and mustard oil."
+  },
+  {
+    "title": "Egg Curry",
+    "ingredients": [
+      "egg",
+      "onion",
+      "tomato",
+      "oil",
+      "turmeric",
+      "salt"
+    ],
+    "instructions": "Hard-boil egg, saute vegetables and spices, simmer in sauce."
+  },
+  {
+    "title": "Vegetable Stir Fry",
+    "ingredients": [
+      "carrot",
+      "potato",
+      "beans",
+      "oil",
+      "salt"
+    ],
+    "instructions": "Slice vegetables thinly and cook in pan until tender."
+  },
+  {
+    "title": "Banana Oatmeal",
+    "ingredients": [
+      "banana",
+      "oats",
+      "milk"
+    ],
+    "instructions": "Heat oats with milk until cooked and top with sliced banana."
+  },
+  {
+    "title": "Tomato Soup",
+    "ingredients": [
+      "tomato",
+      "onion",
+      "water",
+      "salt"
+    ],
+    "instructions": "Simmer chopped vegetables in water and blend carefully."
+  },
+  {
+    "title": "Boiled Egg Salad",
+    "ingredients": [
+      "egg",
+      "cucumber",
+      "tomato",
+      "salt"
+    ],
+    "instructions": "Hard-boil egg and chop alongside washed vegetables."
+  },
+  {
+    "title": "Potato Onion Fry",
+    "ingredients": [
+      "potato",
+      "onion",
+      "oil",
+      "salt"
+    ],
+    "instructions": "Slice vegetables and pan-fry until cooked."
+  },
+  {
+    "title": "Carrot Rice",
+    "ingredients": [
+      "rice",
+      "carrot",
+      "onion",
+      "oil",
+      "salt"
+    ],
+    "instructions": "Saute carrot and onion, add washed rice and water and cook."
+  }
+]
