@@ -31,19 +31,20 @@ app = FastAPI(
 )
 
 # Allow Flutter Web frontend to access the backend
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:55000",
-        "http://127.0.0.1:55000",
         "https://nimble-rolypoly-7d5bc6.netlify.app",
         "https://helpful-vacherin-840342.netlify.app",
         "https://foodwise-app.pages.dev",
     ],
+    allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 # API routers
 app.include_router(auth.router)
 app.include_router(foods.router)
