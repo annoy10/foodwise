@@ -37,13 +37,13 @@ app.add_middleware(
         "http://localhost:55000",
         "http://127.0.0.1:55000",
         "https://nimble-rolypoly-7d5bc6.netlify.app",
+        "https://helpful-vacherin-840342.netlify.app",
         "https://foodwise-app.pages.dev",
     ],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 # API routers
 app.include_router(auth.router)
 app.include_router(foods.router)
