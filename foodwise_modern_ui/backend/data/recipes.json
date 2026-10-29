@@ -1,160 +1,203 @@
+
 [
   {
     "title": "Egg Potato Tomato Curry",
-    "ingredients": [
-      "egg",
-      "potato",
-      "tomato",
-      "oil",
-      "salt",
-      "turmeric"
-    ],
+    "ingredients": ["egg", "potato", "tomato", "oil", "salt", "turmeric"],
     "instructions": "Boil eggs and potatoes; saute chopped tomato and spices; simmer together until cooked."
   },
   {
     "title": "Potato Tomato Bhaji",
-    "ingredients": [
-      "potato",
-      "tomato",
-      "oil",
-      "salt"
-    ],
+    "ingredients": ["potato", "tomato", "oil", "salt"],
     "instructions": "Dice potatoes and tomatoes, then saute and cook covered until tender."
   },
   {
     "title": "Tomato Omelette",
-    "ingredients": [
-      "egg",
-      "tomato",
-      "oil",
-      "salt"
-    ],
+    "ingredients": ["egg", "tomato", "oil", "salt"],
     "instructions": "Beat egg with chopped tomato and salt, then cook thoroughly in a pan."
   },
   {
     "title": "Potato Egg Omelette",
-    "ingredients": [
-      "egg",
-      "potato",
-      "oil",
-      "salt"
-    ],
+    "ingredients": ["egg", "potato", "oil", "salt"],
     "instructions": "Use cooked grated potato with beaten egg; pan cook both sides."
   },
   {
     "title": "Vegetable Khichuri",
-    "ingredients": [
-      "rice",
-      "lentils",
-      "potato",
-      "carrot",
-      "turmeric",
-      "salt"
-    ],
+    "ingredients": ["rice", "lentils", "potato", "carrot", "turmeric", "salt"],
     "instructions": "Wash rice and lentils, add vegetables, water and spices, simmer until soft."
   },
   {
     "title": "Egg Fried Rice",
-    "ingredients": [
-      "cooked rice",
-      "egg",
-      "onion",
-      "oil",
-      "salt"
-    ],
+    "ingredients": ["cooked rice", "egg", "onion", "oil", "salt"],
     "instructions": "Stir-fry cooked rice and vegetables with thoroughly cooked egg."
   },
   {
     "title": "Tomato Dal",
-    "ingredients": [
-      "lentils",
-      "tomato",
-      "turmeric",
-      "salt"
-    ],
+    "ingredients": ["lentils", "tomato", "turmeric", "salt"],
     "instructions": "Cook lentils until tender; add sauteed tomato and spices."
   },
   {
     "title": "Potato Mash",
-    "ingredients": [
-      "potato",
-      "onion",
-      "salt",
-      "mustard oil"
-    ],
+    "ingredients": ["potato", "onion", "salt", "mustard oil"],
     "instructions": "Boil potato, mash with finely chopped onion, salt and mustard oil."
   },
   {
     "title": "Egg Curry",
-    "ingredients": [
-      "egg",
-      "onion",
-      "tomato",
-      "oil",
-      "turmeric",
-      "salt"
-    ],
+    "ingredients": ["egg", "onion", "tomato", "oil", "turmeric", "salt"],
     "instructions": "Hard-boil egg, saute vegetables and spices, simmer in sauce."
   },
   {
     "title": "Vegetable Stir Fry",
-    "ingredients": [
-      "carrot",
-      "potato",
-      "beans",
-      "oil",
-      "salt"
-    ],
+    "ingredients": ["carrot", "potato", "beans", "oil", "salt"],
     "instructions": "Slice vegetables thinly and cook in pan until tender."
   },
   {
     "title": "Banana Oatmeal",
-    "ingredients": [
-      "banana",
-      "oats",
-      "milk"
-    ],
+    "ingredients": ["banana", "oats", "milk"],
     "instructions": "Heat oats with milk until cooked and top with sliced banana."
   },
   {
     "title": "Tomato Soup",
-    "ingredients": [
-      "tomato",
-      "onion",
-      "water",
-      "salt"
-    ],
+    "ingredients": ["tomato", "onion", "water", "salt"],
     "instructions": "Simmer chopped vegetables in water and blend carefully."
   },
   {
     "title": "Boiled Egg Salad",
-    "ingredients": [
-      "egg",
-      "cucumber",
-      "tomato",
-      "salt"
-    ],
+    "ingredients": ["egg", "cucumber", "tomato", "salt"],
     "instructions": "Hard-boil egg and chop alongside washed vegetables."
   },
   {
     "title": "Potato Onion Fry",
-    "ingredients": [
-      "potato",
-      "onion",
-      "oil",
-      "salt"
-    ],
+    "ingredients": ["potato", "onion", "oil", "salt"],
     "instructions": "Slice vegetables and pan-fry until cooked."
   },
   {
     "title": "Carrot Rice",
-    "ingredients": [
-      "rice",
-      "carrot",
-      "onion",
-      "oil",
-      "salt"
-    ],
+    "ingredients": ["rice", "carrot", "onion", "oil", "salt"],
     "instructions": "Saute carrot and onion, add washed rice and water and cook."
+  },
+  {
+    "title": "Chicken Curry",
+    "ingredients": ["chicken", "onion", "tomato", "oil", "salt", "turmeric", "ginger", "garlic"],
+    "instructions": "Heat oil and saute onion, ginger and garlic. Add tomato, turmeric and salt. Add chicken and cook with a little water until completely cooked through."
+  },
+  {
+    "title": "Chicken Potato Curry",
+    "ingredients": ["chicken", "potato", "onion", "oil", "salt", "turmeric"],
+    "instructions": "Saute chopped onion and turmeric in oil. Add chicken and potato pieces with water. Simmer until chicken is thoroughly cooked and potatoes are tender."
+  },
+  {
+    "title": "Chicken Khichuri",
+    "ingredients": ["chicken", "rice", "lentils", "onion", "turmeric", "salt", "oil"],
+    "instructions": "Wash rice and lentils. Saute onion and chicken with turmeric. Add rice, lentils and sufficient water. Cook until the chicken is thoroughly cooked and the rice and lentils are soft."
+  },
+  {
+    "title": "Beef Curry",
+    "ingredients": ["beef", "onion", "ginger", "garlic", "turmeric", "oil", "salt"],
+    "instructions": "Saute onion, ginger and garlic in oil. Add beef, turmeric and salt. Add water and simmer until the beef is fully cooked and tender."
+  },
+  {
+    "title": "Beef Potato Curry",
+    "ingredients": ["beef", "potato", "onion", "ginger", "oil", "salt", "turmeric"],
+    "instructions": "Cook onion and ginger in oil. Add beef and spices with water. Simmer until partly tender, add potatoes and continue cooking until the meat and potatoes are fully cooked."
+  },
+  {
+    "title": "Mutton Curry",
+    "ingredients": ["mutton", "onion", "ginger", "garlic", "turmeric", "oil", "salt"],
+    "instructions": "Saute onion, ginger and garlic. Add mutton, turmeric, salt and water. Cook over low heat until the mutton is thoroughly cooked and tender."
+  },
+  {
+    "title": "Mutton Potato Curry",
+    "ingredients": ["mutton", "potato", "onion", "oil", "turmeric", "salt"],
+    "instructions": "Saute onion in oil with turmeric. Add mutton and water, then simmer until partly tender. Add potatoes and continue cooking until everything is tender."
+  },
+  {
+    "title": "Rohu Fish Curry",
+    "ingredients": ["rohu fish", "potato", "tomato", "turmeric", "oil", "salt"],
+    "instructions": "Season fish with turmeric and salt. Lightly fry in oil. Simmer potato and tomato with water and spices, then add fish and cook until fully cooked."
+  },
+  {
+    "title": "Hilsa Fish Curry",
+    "ingredients": ["hilsa fish", "mustard oil", "turmeric", "salt", "green chili"],
+    "instructions": "Heat mustard oil, add turmeric, salt and green chili. Add water and hilsa pieces. Simmer gently until the fish is completely cooked."
+  },
+  {
+    "title": "Pangas Fish Curry",
+    "ingredients": ["pangas fish", "onion", "tomato", "turmeric", "oil", "salt"],
+    "instructions": "Saute onion and tomato in oil with turmeric. Add water and pangas fish. Simmer gently until the fish is thoroughly cooked."
+  },
+  {
+    "title": "Fish and Potato Curry",
+    "ingredients": ["fish", "potato", "onion", "tomato", "oil", "salt", "turmeric"],
+    "instructions": "Saute onion and tomato with turmeric. Add potato pieces and water. When potatoes are almost tender, add fish and cook until fully cooked."
+  },
+  {
+    "title": "Shrimp Curry",
+    "ingredients": ["shrimp", "onion", "tomato", "garlic", "oil", "salt", "turmeric"],
+    "instructions": "Saute onion and garlic with tomato and turmeric. Add cleaned shrimp and cook until shrimp is opaque and fully cooked."
+  },
+  {
+    "title": "Shrimp with Bottle Gourd",
+    "ingredients": ["shrimp", "bottle gourd", "onion", "oil", "turmeric", "salt"],
+    "instructions": "Saute onion and turmeric in oil. Add chopped bottle gourd and cook until soft. Add cleaned shrimp and cook thoroughly."
+  },
+  {
+    "title": "Masoor Dal",
+    "ingredients": ["red lentils", "onion", "turmeric", "salt", "oil"],
+    "instructions": "Wash lentils and boil with water and turmeric until soft. Saute onion in oil and add it to the cooked lentils. Season with salt."
+  },
+  {
+    "title": "Chickpea Curry",
+    "ingredients": ["chickpeas", "onion", "tomato", "turmeric", "oil", "salt"],
+    "instructions": "Soak dried chickpeas and cook until tender. Saute onion and tomato with turmeric. Add cooked chickpeas, a little water and salt. Simmer together."
+  },
+  {
+    "title": "Vegetable Dal",
+    "ingredients": ["lentils", "potato", "carrot", "tomato", "turmeric", "salt"],
+    "instructions": "Wash lentils and chop vegetables. Add everything to a pot with water and turmeric. Simmer until lentils and vegetables are tender."
+  },
+  {
+    "title": "Mixed Vegetable Curry",
+    "ingredients": ["potato", "carrot", "beans", "cauliflower", "onion", "oil", "salt", "turmeric"],
+    "instructions": "Saute onion and turmeric in oil. Add chopped vegetables with a little water. Cover and cook until all vegetables are tender."
+  },
+  {
+    "title": "Cauliflower Potato Curry",
+    "ingredients": ["cauliflower", "potato", "tomato", "oil", "salt", "turmeric"],
+    "instructions": "Saute tomato and turmeric in oil. Add cauliflower and potato pieces with a little water. Cover and cook until tender."
+  },
+  {
+    "title": "Bottle Gourd Curry",
+    "ingredients": ["bottle gourd", "onion", "green chili", "oil", "salt"],
+    "instructions": "Peel and chop bottle gourd. Saute onion and green chili in oil. Add bottle gourd and salt, cover and cook until tender."
+  },
+  {
+    "title": "Eggplant Bhorta",
+    "ingredients": ["eggplant", "onion", "green chili", "mustard oil", "salt"],
+    "instructions": "Roast eggplant until soft and fully cooked. Remove the skin and mash with chopped onion, green chili, mustard oil and salt."
+  },
+  {
+    "title": "Potato Bhorta",
+    "ingredients": ["potato", "onion", "green chili", "mustard oil", "salt"],
+    "instructions": "Boil peeled potatoes until tender. Mash with finely chopped onion, green chili, mustard oil and salt."
+  },
+  {
+    "title": "Pumpkin Bhaji",
+    "ingredients": ["pumpkin", "onion", "oil", "salt", "turmeric"],
+    "instructions": "Cut pumpkin into small pieces. Saute onion and turmeric in oil, add pumpkin and salt, and cook covered until soft."
+  },
+  {
+    "title": "Spinach Bhaji",
+    "ingredients": ["spinach", "garlic", "onion", "oil", "salt"],
+    "instructions": "Wash spinach thoroughly. Saute chopped onion and garlic in oil. Add spinach and cook until wilted and tender."
+  },
+  {
+    "title": "Chicken Vegetable Soup",
+    "ingredients": ["chicken", "carrot", "potato", "onion", "water", "salt"],
+    "instructions": "Place chicken and chopped vegetables in a pot with water. Simmer until chicken is thoroughly cooked and vegetables are tender. Season with salt."
+  },
+  {
+    "title": "Banana Milk Smoothie",
+    "ingredients": ["banana", "milk"],
+    "instructions": "Peel and slice banana. Blend with pasteurized milk until smooth. Serve immediately."
   }
 ]
