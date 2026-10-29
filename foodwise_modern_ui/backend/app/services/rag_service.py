@@ -13,9 +13,9 @@ from app.models.recipe import RecipeKnowledge
 from app.core.config import settings
 
 
-# --------------------------------------------------
-# Groq Cloud LLM
-# --------------------------------------------------
+# ==========================================
+# GROQ CLOUD LLM
+# ==========================================
 
 llm = ChatGroq(
     model=settings.groq_model,
@@ -25,9 +25,9 @@ llm = ChatGroq(
 )
 
 
-# --------------------------------------------------
-# STEP 1: Select matching recipes
-# --------------------------------------------------
+# ==========================================
+# STEP 1: SELECT MATCHING RECIPES
+# ==========================================
 
 selection_prompt = ChatPromptTemplate.from_messages([
     (
@@ -35,20 +35,18 @@ selection_prompt = ChatPromptTemplate.from_messages([
         """
 You are FoodWise's recipe search assistant.
 
-Select up to 5 relevant recipes from the supplied catalog.
+Choose up to 5 suitable recipes from the catalog.
 
-Rules:
-1. Understand Bengali, English and Banglish questions.
-2. Understand Bengali ingredient names and their English equivalents.
-3. Prefer recipes matching ingredients the user actually has.
-4. Do not assume the user has ingredients they did not mention.
-5. Only select numeric IDs from the supplied catalog.
-6. Never invent recipe IDs.
-7. Return ONLY a JSON array of integer IDs.
-8. Order IDs from most relevant to least relevant.
-9. If no relevant recipe exists, return [].
+RULES:
+1. Understand Bengali, English and Banglish.
+2. Understand ingredient names in both Bangla and English.
+3. Prefer recipes that match ingredients the user has.
+4. Never invent recipe IDs.
+5. Return ONLY a valid JSON array of integer IDs.
+6. Return IDs ordered by relevance.
+7. If nothing is relevant, return [].
 
-Example output:
+Example:
 [2, 4, 1]
 """
     ),
@@ -66,9 +64,9 @@ selection_chain = (
 )
 
 
-# --------------------------------------------------
-# STEP 2: Generate detailed Bangla recipe answers
-# --------------------------------------------------
+# ==========================================
+# STEP 2: GENERATE BENGALI RECIPE ANSWER
+# ==========================================
 
 answer_prompt = ChatPromptTemplate.from_messages([
     (
@@ -76,58 +74,64 @@ answer_prompt = ChatPromptTemplate.from_messages([
         """
 You are FoodWise, a friendly Bengali cooking assistant.
 
-Your task is to explain real recipes retrieved from the
-FoodWise recipe database.
+Use only recipes supplied in the retrieved context.
 
 LANGUAGE RULES:
-1. Always answer in natural, simple Bangla.
-2. Understand Bengali, English and Banglish questions.
-3. Translate English recipe names into Bangla.
-4. Translate ingredient names into Bangla.
-5. Use friendly and easy cooking instructions.
+1. Always answer in simple, natural Bengali.
+2. Understand Bengali, English and Banglish.
+3. Translate recipe names and ingredients into Bengali.
+4. Explain cooking methods for beginners.
 
 RECIPE RULES:
-1. Use only recipes supplied in the retrieved context.
-2. Recommend a maximum of 2 recipes.
-3. If the user requests one recipe, explain only one.
-4. Prefer recipes matching the user's ingredients.
-5. Use the database instructions as the factual basis.
-6. Expand short instructions into 5 to 7 practical steps.
-7. You may explain ordinary preparation and cooking techniques.
-8. Do not invent major ingredients or unsupported claims.
-9. Do not invent specific cooking times or nutrition values.
-10. Never suggest unsafe or spoiled food.
-11. Make sure meat, fish, eggs and seafood are cooked safely.
-12. Avoid repeating sentences or unnecessary explanations.
+1. Recommend at most 2 recipes.
+2. If the user asks for one recipe, show only one.
+3. Prefer recipes matching available ingredients.
+4. Follow the database cooking instructions.
+5. Expand cooking instructions into 5 to 7 clear steps.
+6. You may explain ordinary preparation steps.
+7. Do not invent major ingredients.
+8. Do not invent exact cooking times or nutrition values.
+9. Ensure meat, fish, seafood and eggs are cooked safely.
+10. Avoid repeating the same information.
 
 INGREDIENT RULES:
-1. Show the complete ingredient list for the selected recipe.
-2. If the user lists available ingredients, compare them
-   with the recipe ingredients.
-3. Clearly identify missing ingredients.
-4. Never assume unmentioned ingredients are available.
-5. If the user did not list available ingredients, write
-   "জানা নেই" in the missing ingredients section.
+1. Show all required ingredients in Bengali.
+2. Check whether the user explicitly lists ingredients
+   that they currently have.
+3. ONLY when the user lists available ingredients,
+   compare them with the recipe ingredients.
+4. Show required ingredients not mentioned by the user
+   under the heading "🛒 অনুপস্থিত উপকরণ".
+5. If the user listed all required ingredients, write:
+   "🛒 অনুপস্থিত উপকরণ: নেই"
+6. If the user only asks for a recipe or cooking method,
+   OMIT the missing ingredients section completely.
+7. Never write "অনুপস্থিত উপকরণ: জানা নেই".
+8. Do not assume unmentioned ingredients are available.
+9. Treat unmentioned ingredients as not confirmed,
+   not as proof that the user does not own them.
 
 FORMATTING RULES:
-1. Output ONLY plain text.
-2. Never use Markdown characters such as **, *, #, or backticks.
-3. Never show technical headings such as:
-   "Retrieved recipes", "Context", "Database", "Sources".
-4. Do not mention recipe IDs, model names or database queries.
-5. Keep each cooking step on its own line.
-6. Use Bengali digits for numbered cooking steps.
-7. Do not add extra unrelated recipes.
+1. Output plain text only.
+2. Never use Markdown formatting characters such as
+   **, *, ##, ###, or backticks.
+3. Never show "Retrieved recipes", "Context",
+   "Database", "Sources", or recipe IDs.
+4. Keep each cooking step on a separate line.
+5. Use Bengali digits in numbered steps.
+6. Never include unrelated recipes.
+7. Do not add the missing ingredients heading when
+   the user has not listed available ingredients.
 
-For EACH recommended recipe, follow this format:
+RESPONSE FORMAT:
 
-🍲 রেসিপির নাম: [রেসিপির বাংলা নাম]
+🍲 রেসিপির নাম: [বাংলা রেসিপির নাম]
 
 🥗 প্রয়োজনীয় উপকরণ: [সব উপকরণ বাংলায়]
 
-🛒 অনুপস্থিত উপকরণ: [অনুপস্থিত উপকরণ;
-যদি কিছু অনুপস্থিত না থাকে লিখবে "নেই";
-উপলব্ধ উপকরণ না জানলে লিখবে "জানা নেই"]
+[Only if the user listed available ingredients:
+🛒 অনুপস্থিত উপকরণ: [অনুল্লিখিত প্রয়োজনীয় উপকরণ
+অথবা নেই]]
 
 👨‍🍳 রান্নার পদ্ধতি:
 ১. [প্রথম ধাপ]
@@ -138,15 +142,16 @@ For EACH recommended recipe, follow this format:
 ৬. [প্রয়োজনে ষষ্ঠ ধাপ]
 ৭. [প্রয়োজনে সপ্তম ধাপ]
 
-💚 স্বাস্থ্য পরামর্শ: [একটি সংক্ষিপ্ত, প্রাসঙ্গিক পরামর্শ]
+💚 স্বাস্থ্য পরামর্শ: [সংক্ষিপ্ত পরামর্শ]
 
-Remember: Detailed, beginner-friendly Bengali instructions.
+For multiple recipes, repeat the same structure.
 """
     ),
     (
         "human",
         "RETRIEVED RECIPES:\n{context}\n\n"
-        "USER QUESTION:\n{question}"
+        "USER QUESTION:\n{question}\n\n"
+        "AVAILABLE INGREDIENTS PROVIDED: {has_ingredients}"
     )
 ])
 
@@ -157,49 +162,113 @@ rag_chain = (
 )
 
 
-# --------------------------------------------------
-# STEP 3: Clean unwanted Markdown characters
-# --------------------------------------------------
+# ==========================================
+# STEP 3: DETECT AVAILABLE INGREDIENTS
+# ==========================================
 
-def clean_response(text: str) -> str:
+def user_listed_ingredients(question: str) -> bool:
     """
-    Remove Markdown formatting for older Flutter APKs
-    that display Markdown as raw text.
+    Determine whether the user explicitly says
+    which ingredients they currently have.
     """
+
+    question = question.lower().strip()
+
+    patterns = [
+        r"আমার কাছে",
+        r"আমার ঘরে",
+        r"আমার বাসায়",
+        r"আমার বাসায়",
+        r"আমার আছে",
+        r"আমার কাছে আছে",
+        r"বাসায় আছে",
+        r"বাসায় আছে",
+        r"ঘরে আছে",
+        r"\bi have\b",
+        r"\bi've got\b",
+        r"\bi got\b",
+        r"\bavailable ingredients\b",
+        r"\bingredients i have\b",
+        r"\bamar kache\b",
+        r"\bamar kase\b",
+        r"\bamar ache\b",
+    ]
+
+    return any(
+        re.search(pattern, question)
+        for pattern in patterns
+    )
+
+
+# ==========================================
+# STEP 4: CLEAN RESPONSE
+# ==========================================
+
+def clean_response(
+    text: str,
+    has_ingredients: bool = False
+) -> str:
 
     text = str(text or "").strip()
 
-    # Remove fenced code markers, if any.
+    # Remove code fences.
     text = re.sub(r"```[^\n]*", "", text)
 
-    # Remove Markdown heading markers.
-    text = re.sub(r"(?m)^\s{0,3}#{1,6}\s*", "", text)
-
-    # Remove Markdown bold / italic markers.
-    text = text.replace("**", "")
-    text = text.replace("__", "")
-
-    # Remove single Markdown emphasis markers.
-    text = text.replace("*", "")
-    text = text.replace("`", "")
-
-    # Remove accidental technical headings.
+    # Remove Markdown headings.
     text = re.sub(
-        r"(?im)^\s*(retrieved recipes|sources|"
-        r"recipe context|database context)\s*:.*$",
+        r"(?m)^\s{0,3}#{1,6}\s*",
         "",
-        text,
+        text
     )
 
-    # Avoid excessive blank lines.
+    # Remove Markdown emphasis.
+    text = text.replace("**", "")
+    text = text.replace("__", "")
+    text = text.replace("`", "")
+
+    # Remove single Markdown star markers.
+    text = text.replace("*", "")
+
+    # Remove technical lines.
+    text = re.sub(
+        r"(?im)^[^\S\n]*(retrieved recipes|sources|"
+        r"recipe context|database context)\s*:.*$",
+        "",
+        text
+    )
+
+    # Remove "missing ingredients" heading if
+    # the user did not list available ingredients.
+    if not has_ingredients:
+        text = re.sub(
+            r"(?im)^[^\S\n]*🛒\s*অনুপস্থিত\s+উপকরণ\s*:.*(?:\n|$)",
+            "",
+            text
+        )
+
+        text = re.sub(
+            r"(?im)^[^\S\n]*অনুপস্থিত\s+উপকরণ\s*:.*(?:\n|$)",
+            "",
+            text
+        )
+
+    # Never show "জানা নেই" as missing ingredients.
+    text = re.sub(
+        r"(?im)^[^\S\n]*🛒?\s*অনুপস্থিত\s+উপকরণ\s*:"
+        r"\s*জানা নেই\s*(?:\n|$)",
+        "",
+        text
+    )
+
+    # Remove excessive blank lines.
     text = re.sub(r"\n{3,}", "\n\n", text)
 
     return text.strip()
 
 
-# --------------------------------------------------
-# STEP 4: Main RAG Answer Function
-# --------------------------------------------------
+# ==========================================
+# STEP 5: MAIN RAG FUNCTION
+# ==========================================
 
 def answer(question: str, db: Session):
 
@@ -207,11 +276,17 @@ def answer(question: str, db: Session):
 
     if not question:
         return {
-            "reply": "আপনি কী রান্না করতে চান বা কী কী উপকরণ আছে লিখুন।",
+            "reply": (
+                "আপনার কাছে কী কী উপকরণ আছে "
+                "অথবা কী রান্না করতে চান, লিখুন।"
+            ),
             "sources": []
         }
 
-    # Read recipes from Supabase PostgreSQL.
+    # Detect ingredient availability list.
+    has_ingredients = user_listed_ingredients(question)
+
+    # Read recipe catalog from Supabase.
     recipes = db.scalars(
         select(RecipeKnowledge)
         .order_by(RecipeKnowledge.title)
@@ -221,18 +296,19 @@ def answer(question: str, db: Session):
     if not recipes:
         return {
             "reply": (
-                "দুঃখিত, বর্তমানে কোনো রেসিপি পাওয়া যাচ্ছে না।"
+                "দুঃখিত, বর্তমানে কোনো রেসিপি "
+                "পাওয়া যাচ্ছে না।"
             ),
             "sources": []
         }
 
-    # Temporary IDs for recipe selection.
+    # Create temporary recipe IDs.
     recipe_map = {
         index: recipe
         for index, recipe in enumerate(recipes, start=1)
     }
 
-    # Build compact recipe catalog.
+    # Create recipe catalog.
     catalog = "\n".join(
         (
             f"{index}. {recipe.title} | "
@@ -241,7 +317,7 @@ def answer(question: str, db: Session):
         for index, recipe in recipe_map.items()
     )
 
-    # Ask Groq to select relevant recipe IDs.
+    # Select matching recipes with Groq.
     selection_text = selection_chain.invoke({
         "catalog": catalog,
         "question": question,
@@ -291,12 +367,12 @@ def answer(question: str, db: Session):
             "reply": (
                 "দুঃখিত, আপনার প্রশ্নের সঙ্গে মিল আছে "
                 "এমন কোনো রেসিপি পাওয়া যায়নি। "
-                "অন্য কিছু উপকরণের নাম দিয়ে চেষ্টা করুন।"
+                "অন্য উপকরণ দিয়ে চেষ্টা করুন।"
             ),
             "sources": []
         }
 
-    # Pass only actual selected database recipes.
+    # Build context from real database recipes.
     context = "\n\n".join(
         (
             f"Recipe: {recipe.title}\n"
@@ -306,16 +382,24 @@ def answer(question: str, db: Session):
         for recipe in selected_recipes
     )
 
-    # Generate final detailed Bengali answer.
+    # Generate detailed Bengali response.
     response = rag_chain.invoke({
         "context": context,
         "question": question,
+        "has_ingredients": (
+            "YES - show missing ingredients"
+            if has_ingredients
+            else "NO - omit missing ingredients section"
+        ),
     })
 
-    # Remove raw Markdown formatting.
-    response = clean_response(response)
+    # Clean text for older Flutter APK.
+    response = clean_response(
+        response,
+        has_ingredients=has_ingredients
+    )
 
-    # Preserve existing API response format.
+    # Keep existing frontend API format.
     return {
         "reply": response,
         "sources": [
