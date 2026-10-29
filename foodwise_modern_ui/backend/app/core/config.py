@@ -10,16 +10,20 @@ class Settings(BaseSettings):
     secret_key: str
     access_token_expire_minutes: int = 60
 
-    # Ollama AI Models
+    # Ollama (Local AI - optional)
     ollama_base_url: str = "http://localhost:11434"
     ollama_chat_model: str = "qwen2.5:3b"
     ollama_embed_model: str = "nomic-embed-text"
 
-    # Load environment variables from .env
+    # Groq Cloud AI
+    groq_api_key: str = ""
+    groq_model: str = "openai/gpt-oss-120b"
+
+    # Load environment variables from backend/.env
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        extra="ignore"
+        extra="ignore",
     )
 
 

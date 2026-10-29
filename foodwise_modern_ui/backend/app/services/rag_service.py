@@ -1,122 +1,194 @@
 
+import json
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from langchain_ollama import ChatOllama, OllamaEmbeddings
-from langchain_core.messages import SystemMessage, HumanMessage
+
+from langchain_groq import ChatGroq
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 
 from app.models.recipe import RecipeKnowledge
 from app.core.config import settings
 
 
-_embeddings = OllamaEmbeddings(
-    model=settings.ollama_embed_model,
-    base_url=settings.ollama_base_url
-)
-
-_llm = ChatOllama(
-    model=settings.ollama_chat_model,
-    base_url=settings.ollama_base_url,
+# Groq Cloud LLM
+llm = ChatGroq(
+    model=settings.groq_model,
+    api_key=settings.groq_api_key,
     temperature=0.1,
-    num_predict=550,
-    repeat_penalty=1.15
+    max_tokens=800,
 )
 
 
-SYSTEM_PROMPT = """
+# Step 1: Recipe selection prompt
+selection_prompt = ChatPromptTemplate.from_messages([
+    (
+        "system",
+        """
+You are a recipe search assistant.
+
+Select up to 5 recipes that best match the user's question.
+
+The question can be in Bengali or English.
+Understand Bengali ingredient names and their English equivalents.
+
+Only select recipe IDs from the supplied catalog.
+Never invent IDs.
+
+Return ONLY a valid JSON array of integer IDs.
+Example: [2, 4, 1]
+If nothing is relevant, return [].
+"""
+    ),
+    (
+        "human",
+        "RECIPE CATALOG:\n{catalog}\n\n"
+        "USER QUESTION:\n{question}"
+    )
+])
+
+selection_chain = (
+    selection_prompt
+    | llm
+    | StrOutputParser()
+)
+
+
+# Step 2: Final answer prompt
+answer_prompt = ChatPromptTemplate.from_messages([
+    (
+        "system",
+        """
 You are FoodWise, a helpful Bengali recipe assistant.
 
-Your job is to recommend practical recipes based on the user's
-available ingredients, using the retrieved recipe database.
+Rules:
+1. Answer in clear Bengali when the user writes Bengali.
+2. Use ONLY the retrieved recipe context.
+3. Recommend at most 2 suitable recipes.
+4. Prefer recipes matching available ingredients.
+5. Mention missing ingredients clearly.
+6. Follow cooking instructions from the database.
+7. Do not invent ingredients or nutrition values.
+8. Avoid repeating sentences.
+9. Never recommend spoiled or unsafe food.
 
-STRICT RULES:
+Answer format:
 
-1. Answer in natural, clear Bengali if the user writes in Bengali.
-2. Use ONLY the recipes provided in the retrieved context.
-3. Recommend a maximum of TWO recipes.
-4. Prioritize recipes that use the user's available ingredients.
-5. Never falsely claim that the user has an ingredient.
-6. Clearly identify any missing ingredients.
-7. Do not invent cooking steps, quantities, or nutrition values.
-8. Do not repeat sentences or recommendations.
-9. Do not include unrelated recipes.
-10. If no suitable recipe is found, explain this politely.
-11. Do not recommend spoiled or unsafe food.
-
-ANSWER FORMAT:
-
-🍲 রেসিপির নাম: [Recipe name]
-
+🍲 রেসিপির নাম:
 🥗 প্রয়োজনীয় উপকরণ:
-- List the ingredients from the retrieved recipe.
-- Mention which ingredients the user is missing.
-
+🛒 অনুপস্থিত উপকরণ:
 👩‍🍳 রান্নার পদ্ধতি:
-1. Write the first cooking step.
-2. Write the next steps in order.
-3. Include all relevant steps from the recipe context.
-
 💚 স্বাস্থ্যকর টিপস:
-Give one short practical tip without inventing nutrition facts.
-
-IMPORTANT:
-Write one complete useful answer.
-Avoid repeating the same idea.
-Prefer accurate instructions over unnecessary explanations.
 """
+    ),
+    (
+        "human",
+        "RETRIEVED RECIPES:\n{context}\n\n"
+        "USER QUESTION:\n{question}"
+    )
+])
+
+rag_chain = (
+    answer_prompt
+    | llm
+    | StrOutputParser()
+)
 
 
 def answer(question: str, db: Session):
 
-    # 1. Convert the user's question into an embedding
-    vector = _embeddings.embed_query(question)
-
-    # 2. Find the 5 most semantically similar recipes
-    hits = db.scalars(
+    # Read recipe catalog from Supabase PostgreSQL
+    recipes = db.scalars(
         select(RecipeKnowledge)
-        .order_by(
-            RecipeKnowledge.embedding.cosine_distance(vector)
-        )
-        .limit(5)
+        .order_by(RecipeKnowledge.title)
+        .limit(200)
     ).all()
 
-    # 3. Handle an empty recipe knowledge base
-    if not hits:
+    if not recipes:
         return {
             "reply": (
                 "Recipe knowledge base খালি। "
-                "প্রথমে python -m app.seed_recipes চালাও।"
+                "প্রথমে recipe data যোগ করতে হবে।"
             ),
             "sources": []
         }
 
-    # 4. Build context from retrieved recipes
-    context = "\n\n".join(
-        (
-            f"Recipe {i}: {r.title}\n"
-            f"Ingredients: {r.ingredients}\n"
-            f"Cooking instructions: {r.instructions}"
-        )
-        for i, r in enumerate(hits, 1)
+    # Create short catalog with temporary numeric IDs
+    recipe_map = {
+        index: recipe
+        for index, recipe in enumerate(recipes, start=1)
+    }
+
+    catalog = "\n".join(
+        f"{index}. {recipe.title} | "
+        f"Ingredients: {recipe.ingredients}"
+        for index, recipe in recipe_map.items()
     )
 
-    # 5. Prepare the messages for Ollama
-    msgs = [
-        SystemMessage(content=SYSTEM_PROMPT),
-        HumanMessage(
-            content=(
-                f"RETRIEVED RECIPE CONTEXT:\n{context}\n\n"
-                f"USER QUESTION:\n{question}\n\n"
-                "Follow the requested answer format. "
-                "Recommend only suitable recipes from the context."
-            )
+    # Groq selects relevant recipe IDs
+    selection_text = selection_chain.invoke({
+        "catalog": catalog,
+        "question": question,
+    })
+
+    try:
+        start = selection_text.index("[")
+        end = selection_text.index("]", start) + 1
+
+        selected_ids = json.loads(
+            selection_text[start:end]
         )
-    ]
+    except (ValueError, json.JSONDecodeError):
+        selected_ids = []
 
-    # 6. Generate the AI response
-    response = _llm.invoke(msgs)
+    if not isinstance(selected_ids, list):
+        selected_ids = []
 
-    # 7. Return the response and retrieved sources
+    # Only use recipes that really exist
+    selected_recipes = []
+    seen = set()
+
+    for recipe_id in selected_ids:
+        if type(recipe_id) is not int:
+            continue
+
+        if recipe_id in recipe_map and recipe_id not in seen:
+            selected_recipes.append(recipe_map[recipe_id])
+            seen.add(recipe_id)
+
+        if len(selected_recipes) >= 5:
+            break
+
+    if not selected_recipes:
+        return {
+            "reply": (
+                "দুঃখিত, আপনার উপকরণের সঙ্গে "
+                "মিল আছে এমন রেসিপি পাওয়া যায়নি।"
+            ),
+            "sources": []
+        }
+
+    # Build context using actual database recipes
+    context = "\n\n".join(
+        (
+            f"Recipe: {recipe.title}\n"
+            f"Ingredients: {recipe.ingredients}\n"
+            f"Cooking Instructions: {recipe.instructions}"
+        )
+        for recipe in selected_recipes
+    )
+
+    # Generate Bengali answer from retrieved recipes
+    response = rag_chain.invoke({
+        "context": context,
+        "question": question,
+    })
+
     return {
-        "reply": str(response.content),
-        "sources": [r.title for r in hits]
+        "reply": response,
+        "sources": [
+            recipe.title
+            for recipe in selected_recipes
+        ],
     }
