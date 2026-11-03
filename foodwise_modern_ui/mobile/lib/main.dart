@@ -1,40 +1,118 @@
+
 import 'package:flutter/material.dart';
+
 import 'services/api.dart';
 import 'screens/auth_screen.dart';
 import 'screens/home_screen.dart';
 
-void main() => runApp(const FoodWiseApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const FoodWiseApp());
+}
 
 class FoodWiseApp extends StatefulWidget {
   const FoodWiseApp({super.key});
+
   @override
   State<FoodWiseApp> createState() => _FoodWiseAppState();
 }
 
 class _FoodWiseAppState extends State<FoodWiseApp> {
-  final api = Api();
+  final Api api = Api();
+
   bool loggedIn = false;
+  bool checkingLogin = true;
+
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: 'FoodWise',
-    theme: ThemeData(
-      useMaterial3: true,
-      scaffoldBackgroundColor: const Color(0xFFF7FAF7),
-      colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF248648)),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true, fillColor: Colors.white,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
+  void initState() {
+    super.initState();
+    _restoreLogin();
+  }
+
+  Future<void> _restoreLogin() async {
+    try {
+      // This method will be added to services/api.dart.
+      final bool restored = await api.restoreSession();
+
+      if (!mounted) return;
+
+      setState(() {
+        loggedIn = restored;
+        checkingLogin = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+
+      setState(() {
+        loggedIn = false;
+        checkingLogin = false;
+      });
+    }
+  }
+
+  Future<void> _logout() async {
+    // This method will be added to services/api.dart.
+    await api.logout();
+
+    if (!mounted) return;
+
+    setState(() {
+      loggedIn = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'FoodWise',
+      theme: ThemeData(
+        useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFF7FAF7),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF248648),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 15,
+          ),
+        ),
+        cardTheme: CardThemeData(
+          color: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+            side: const BorderSide(
+              color: Color(0xFFE5EBE5),
+            ),
+          ),
+        ),
       ),
-      cardTheme: CardThemeData(
-        color: Colors.white, elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18),
-          side: const BorderSide(color: Color(0xFFE5EBE5))),
+      home: checkingLogin
+          ? const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      )
+          : loggedIn
+          ? HomeScreen(
+        api: api,
+        onLogout: _logout,
+      )
+          : AuthScreen(
+        api: api,
+        onLogin: () {
+          setState(() {
+            loggedIn = true;
+          });
+        },
       ),
-    ),
-    home: loggedIn
-        ? HomeScreen(api: api, onLogout: () => setState(() { api.token = null; loggedIn = false; }))
-        : AuthScreen(api: api, onLogin: () => setState(() => loggedIn = true)),
-  );
+    );
+  }
 }
