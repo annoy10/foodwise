@@ -1,25 +1,52 @@
 
 from contextlib import asynccontextmanager
+import logging
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.database import Base, engine
-import app.models  # Register SQLAlchemy models
-from app.routers import auth, foods, meals, extended, chatbot
+import app.models
+
+from app.routers import (
+    auth,
+    foods,
+    meals,
+    extended,
+    chatbot,
+)
+
+
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Ensure pgvector extension exists
-    with engine.begin() as connection:
-        connection.execute(
-            text("CREATE EXTENSION IF NOT EXISTS vector")
-        )
 
-    # Create tables that do not already exist
-    Base.metadata.create_all(bind=engine)
+    # Local testing:
+    # SKIP_DB_STARTUP=true skips database initialization.
+    skip_db = os.getenv(
+        "SKIP_DB_STARTUP", "false"
+    ).lower() == "true"
+
+    if skip_db:
+        logger.warning(
+            "Skipping database initialization "
+            "(SKIP_DB_STARTUP=true)"
+        )
+    else:
+        # Database initialization for normal deployment
+        with engine.begin() as connection:
+            connection.execute(
+                text(
+                    "CREATE EXTENSION IF NOT EXISTS vector"
+                )
+            )
+
+        Base.metadata.create_all(bind=engine)
 
     yield
 
@@ -30,7 +57,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Allow Flutter Web frontend to access the backend
 
 app.add_middleware(
     CORSMiddleware,
@@ -45,7 +71,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# API routers
+
 app.include_router(auth.router)
 app.include_router(foods.router)
 app.include_router(meals.router)
